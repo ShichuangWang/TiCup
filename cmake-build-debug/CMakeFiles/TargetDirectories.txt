@@ -1,0 +1,3 @@
+D:/CLionProjects/TiCup/cmake-build-debug/CMakeFiles/TiCup.dir
+D:/CLionProjects/TiCup/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/CLionProjects/TiCup/cmake-build-debug/CMakeFiles/rebuild_cache.dir

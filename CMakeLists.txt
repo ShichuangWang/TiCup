@@ -1,8 +1,9 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.16)
 project(TiCup)
 set(CMAKE_CXX_STANDARD 11)
 find_package(OpenCV REQUIRED)
-
+find_package(Threads REQUIRED)
+find_library(WIRINGPI_LIBRARIES NAMES wiringPi)
 add_executable(TiCup main.cpp)
 include_directories(${OpenCV_INCLUDE_DIRS})
-target_link_libraries(TiCup ${OpenCV_LIBS})
+target_link_libraries(TiCup ${OpenCV_LIBS} ${WIRINGPI_LIBRARIES} Threads::Threads)

@@ -1,0 +1,3 @@
+/home/orangepi/Desktop/TiCup/build/CMakeFiles/rebuild_cache.dir
+/home/orangepi/Desktop/TiCup/build/CMakeFiles/edit_cache.dir
+/home/orangepi/Desktop/TiCup/build/CMakeFiles/TiCup.dir

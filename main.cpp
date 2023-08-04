@@ -16,7 +16,7 @@ Scalar green_l=Scalar(80,80,80);
 Scalar green_h=Scalar(160,160,160);
 
 Scalar black_l=Scalar(0,0,0);
-Scalar black_h=Scalar(110,255,255);
+Scalar black_h=Scalar(100,255,255);
 
 vector<Mat> channels;
 Point getPos(Mat &img);
@@ -31,7 +31,8 @@ void getRoute(Point2f *points,float step_len,vector<Point2f> &route);
 void taskHandler();
 void taskConfig(int number);
 Point p1,p2,p3;
-Point rp,gp;
+Point2f rp,gp;
+Point2f last_rp,last_gp;
 Point2f cornPts[4];
 Mat H;
 
@@ -43,7 +44,7 @@ bool calib_flag=false;
 bool ready_flag=false;
 Point2f src_point[4];
 Point2f dst_point[4];
-Point corn_point[4];
+Point2f corn_point[4];
 int corn_index[4];
 int send_cnt=0;
 float x_err1,x_err2,x_err3;
@@ -51,7 +52,7 @@ float y_err1,y_err2,y_err3;
 Mat dst;
 int opt=0;
 
-int task_num=2;
+int task_num=3;
 
 vector<Point> route;
 vector<Point2f> route2;
@@ -62,8 +63,11 @@ int main() {
   init();
   x_err1=0;x_err2=0;x_err3=0;
   y_err1=0;y_err2=0;y_err3=0;
-  taskConfig(2);
-
+  //taskConfig(2);
+  for(int i=0;i<20;i++)
+  {
+    capture.read(frame);
+  }
   
   while (true)
   {
@@ -71,6 +75,7 @@ int main() {
     capture>>frame;
     if(!frame.empty())
     {
+      //get warpPerspective Mat
       if(calib_flag)
       {
         #if 0
@@ -95,51 +100,69 @@ int main() {
         x_err2=x_err3; y_err2=y_err3;
         printf("X%dY%dF\n",avg_x,avg_y);
         #endif
+        #if 0
+        warpPerspective(frame,dst,H,Size(600,600));
+        //circle(dst,Point(300,300),3,Scalar(255,0,0),-1);
+        r_binary=splitRed(dst);
+        imshow("r_binary",r_binary);
+        g_binary=splitGreen(dst);
+        black=splitBlcak(dst);
+        rp= getPos(r_binary,dst,true);
+        gp= getPos(g_binary,dst,true);
         int64 t1=cv::getTickCount();
+
+        getRect2(black,dst,cornPts,true);
+        getRoute(cornPts,5.0,route2);
+        for(auto item:route2)
+        {
+          circle(dst,item,2,Scalar(255,0,0),-1);
+        }
+        route2.clear();
+        imshow("black",black);
+        imshow("dst",dst);
+        #endif
         if(ready_flag)
         {
           taskHandler();
-          // getRect2(black,dst,cornPts,false);
-          // getRoute(cornPts,10.0,route2);
-          // for(auto item:route2)
-          // {
-          //   circle(dst,item,2,Scalar(255,0,0),-1);
-          // }
-          // route2.clear();
+          #if 0
+          getRect2(black,dst,cornPts,false);
+          getRoute(cornPts,10.0,route2);
+          for(auto item:route2)
+          {
+            circle(dst,item,2,Scalar(255,0,0),-1);
+          }
+          route2.clear();
+          #endif
           imshow("black",black);
           imshow("dst",dst);
           int64 t2=cv::getTickCount();
           //cout<<"tim:"<<(t2-t1)/cv::getTickFrequency()<<endl;
         }
+        else{
+          warpPerspective(frame,dst,H,Size(600,600));
+          //circle(dst,Point(300,300),3,Scalar(255,0,0),-1);
+          // r_binary=splitRed(dst);
+          // imshow("r_binary",r_binary);
+          // g_binary=splitGreen(dst);
+          //black=splitBlcak(dst);
+          imshow("dst",dst);
+        }
         
       }
       else
       {
-        #if 0
-        cvtColor(frame,lab,COLOR_BGR2Lab);
-        inRange(lab,black_l,black_h,black);
 
-        split(frame,channels);//通道分离
-        r_ch=channels.at(2);//r通道
-        g_ch=channels.at(1);//g通道
-
-        tmp=max((r_ch-g_ch),0)*3;//消除负值，提高对比度
-        tmp2=max(-(r_ch-g_ch),0)*3;//消除负值，提高对比度
-
-        threshold(tmp,binary,128,255,THRESH_BINARY);//二值化
-        threshold(tmp2,binary2,128,255,THRESH_BINARY);//二值化
-
-        dilate(binary,binary,element);//膨胀
-        dilate(binary2,binary2,element);//膨胀
-        #endif
         binary=splitRed(frame);
         binary2=splitGreen(frame);
+        //black=splitBlcak(frame);
+
         p1= getPos(binary,frame,true);
         p2= getPos(binary2,frame,true);
         imshow("frame",frame);
         imshow("binary",binary);
 
         imshow("binary2",binary2);
+        //imshow("black",black);
       }
 
       opt=waitKey(1);
@@ -169,6 +192,8 @@ int main() {
           cout<<item<<endl;
         }
       }
+      
+      
     }
     if(serialDataAvail(fd))
     {
@@ -188,6 +213,27 @@ int main() {
       if(tmp_ch=='Z')
       {
         ready_flag=false;
+      }
+      if(tmp_ch=='J')
+      {
+        src_point[0]=p1;
+      }
+      if(tmp_ch=='K')
+      {
+        src_point[1]=p1;
+      }
+      if(tmp_ch=='L')
+      {
+        src_point[2]=p1;
+      }
+      if(tmp_ch=='M')
+      {
+        src_point[3]=p1;
+      }
+      if(tmp_ch=='N')
+      {
+        H=getPerspectiveTransform(src_point,dst_point);
+        calib_flag=true;
       }
     }
   }
@@ -376,14 +422,16 @@ void getRect2(Mat &img,Mat &src_img,Point2f *points,bool drawOut)
   findContours(img,contours,hierarchy,RETR_TREE,CHAIN_APPROX_NONE,Point());
   if(!contours.empty())
   {
+     //drawContours(src_img,contours,-1,Scalar(0,0,255));
     Point2f P[3][4];
     int i=0;
     for (auto item1 : contours)
     {
       //cout << "countours " << i << "area is " << contourArea(item1) << endl;
-      if(contourArea(item1)>50000)
+     
+      if(contourArea(item1)>30000)
       {
-        approxPolyDP(item1,out,50,true);
+        approxPolyDP(item1,out,80,true);
       }
       if(out.size()==4)
       {
@@ -393,8 +441,9 @@ void getRect2(Mat &img,Mat &src_img,Point2f *points,bool drawOut)
           cout<<tmp<<endl;
           P[i][j]=tmp;
           j++;
-          circle(src_img,tmp,2,Scalar(255,0,0),-1);
+          //circle(src_img,tmp,2,Scalar(255,0,0),-1);
         }
+        out.clear();
         //cout<<"next:"<<i<<endl;
         i++;
       }
@@ -451,59 +500,66 @@ void getRoute(Point2f *points,float step_len,vector<Point2f> &tmp_route)
     step_num=int(distance/step_len);
     float x_off=step_len* cos(theat);
     float y_off=step_len* sin(theat);
-    
-
-
-      for(int j=0;j<step_num;j++)
+    for(int i=0;i<8;i++)
+    {
+      route2.push_back(start_p);
+    }
+    for(int j=0;j<step_num;j++)
+    {
+      if((start_p.x>=end_p.x)&&(start_p.y>=end_p.y))
       {
-        if((start_p.x>=end_p.x)&&(start_p.y>=end_p.y))
-        {
-          tmp_route.push_back(Point2f(start_p.x-j*step_len*x_dis/distance,start_p.y-j*step_len*y_dis/distance));
-        }
-        else if((start_p.x>=end_p.x)&&(start_p.y<end_p.y))
-        {
-          tmp_route.push_back(Point2f(start_p.x-j*step_len*x_dis/distance,start_p.y+j*step_len*y_dis/distance));
-
-        }
-        else if((start_p.x<end_p.x)&&(start_p.y>=end_p.y))
-        {
-          tmp_route.push_back(Point2f(start_p.x+j*step_len*x_dis/distance,start_p.y-j*step_len*y_dis/distance));
-
-        }
-        else 
-        {
-          tmp_route.push_back(Point2f(start_p.x+j*step_len*x_dis/distance,start_p.y+j*step_len*y_dis/distance));
-        }
+        tmp_route.push_back(Point2f(start_p.x-j*step_len*x_dis/distance,start_p.y-j*step_len*y_dis/distance));
       }
-      for(int i=0;i<8;i++)
+      else if((start_p.x>=end_p.x)&&(start_p.y<end_p.y))
       {
-        tmp_route.push_back(end_p);
-      }     
-    
+        tmp_route.push_back(Point2f(start_p.x-j*step_len*x_dis/distance,start_p.y+j*step_len*y_dis/distance));
+
+      }
+      else if((start_p.x<end_p.x)&&(start_p.y>=end_p.y))
+      {
+        tmp_route.push_back(Point2f(start_p.x+j*step_len*x_dis/distance,start_p.y-j*step_len*y_dis/distance));
+
+      }
+      else 
+      {
+        tmp_route.push_back(Point2f(start_p.x+j*step_len*x_dis/distance,start_p.y+j*step_len*y_dis/distance));
+      }
+    }
+    for(int i=0;i<8;i++)
+    {
+      tmp_route.push_back(end_p);
+      
+    }    
   }
-  reverse(tmp_route.begin(),tmp_route.end());
+  //add the start point
+  Point2f start=tmp_route.at(tmp_route.size()-1);
+  for(int i=0;i<20;i++)
+  {
+    tmp_route.push_back(start);
+  }
+  //reverse(tmp_route.begin(),tmp_route.end());
 
 }
 void init()
 {
-  src_point[0]=Point2f(479,123);
-  src_point[1]=Point2f(495,658);
-  src_point[2]=Point2f(1043,116);
-  src_point[3]=Point2f(1033,657);
+  src_point[0]=Point2f(435,141);
+  src_point[1]=Point2f(425,534);
+  src_point[2]=Point2f(823,144);
+  src_point[3]=Point2f(831,527);
   //dst points init
-  dst_point[0]=Point2f (0,0);
-  dst_point[1]=Point2f (0,600);
-  dst_point[2]=Point2f (600,0);
-  dst_point[3]=Point2f (600,600);
-  // H= getPerspectiveTransform(src_point,dst_point);
-  // calib_flag=true;
+  dst_point[0]=Point2f (50,50);
+  dst_point[1]=Point2f (50,550);
+  dst_point[2]=Point2f (550,50);
+  dst_point[3]=Point2f (550,550);
+   H= getPerspectiveTransform(src_point,dst_point);
+   calib_flag=true;
   //corn_points init
   corn_point[0]=Point (10,10);
   corn_point[1]=Point (10,490);
   corn_point[2]=Point (490,10);
   corn_point[3]=Point (490,490);
   //capture init
-  capture.set(CAP_PROP_FOURCC,VideoWriter::fourcc('M','J','P','G'));
+  capture.set(CAP_PROP_FOURCC,VideoWriter::fourcc('Y','U','V','2'));
   capture.set(CAP_PROP_FRAME_WIDTH,1280);
   capture.set(CAP_PROP_FRAME_HEIGHT,720);
   capture.set(CAP_PROP_FPS,60);
@@ -519,24 +575,31 @@ void taskHandler()
 {
   //get the points
   warpPerspective(frame,dst,H,Size(600,600));
-  circle(dst,Point(250,250),3,Scalar(255,0,0),-1);
+  circle(dst,Point(300,300),3,Scalar(255,0,0),-1);
   r_binary=splitRed(dst);
-  imshow("r_binary",r_binary);
+  //imshow("r_binary",r_binary);
+  
   g_binary=splitGreen(dst);
+  //imshow("g_binary",g_binary);
   black=splitBlcak(dst);
   rp= getPos(r_binary,dst,true);
   gp= getPos(g_binary,dst,true);
+  if(rp.x==0||rp.y==0)
+  {
+    rp=last_rp;
+  }
+  last_rp=rp;
   //task select
   if(task_num==1)
   {
 
-      x_err3=rp.x-300;y_err3=rp.y-300;
-      int avg_x=(x_err1+x_err2+x_err3)/3;
-      int avg_y=(y_err1+y_err2+y_err3)/3;
-      serialPrintf(fd,"X%dY%dF",avg_x,avg_y);
+      x_err3=rp.x-300.0;y_err3=rp.y-300.0;
+      float avg_x=(x_err1+x_err2+x_err3)/3.0;
+      float avg_y=(y_err1+y_err2+y_err3)/3.0;
+      serialPrintf(fd,"X%.2fY%.2fF",avg_x,avg_y);
       x_err1=x_err2;y_err1=y_err2;
       x_err2=x_err3; y_err2=y_err3;
-      printf("X%dY%dF\n",avg_x,avg_y);
+      printf("X%.2fY%.2fF\n",avg_x,avg_y);
     
   }
 
@@ -546,7 +609,7 @@ void taskHandler()
     //cout<<"r_size:"<<r_size<<endl;
     if(r_size)
     {
-      Point tmp=route.at(r_size-1);
+        Point tmp=route.at(r_size-1);
       //cout<<"target:"<<tmp<<endl;
         circle(dst,tmp,2,Scalar(0,0,255),2,-1);
         x_err3=rp.x-tmp.x;
@@ -576,10 +639,10 @@ void taskHandler()
     {
       //if(!(rp.x==0||rp.y==0))
       //{
-        send_cnt++;
-        if(send_cnt==2)
-        {
-          send_cnt=0;
+        // send_cnt++;
+        // if(send_cnt==2)
+        // {
+        //   send_cnt=0;
         Point2f tmp=route2.at(r_size-1);
         //cout<<"target:"<<tmp<<endl;
         circle(dst,tmp,2,Scalar(0,0,255),2,-1);
@@ -593,7 +656,7 @@ void taskHandler()
         serialPrintf(fd,"X%.2fY%.2fF",avg_x,avg_y);
         //if((fabs(avg_x)<=10)&&(fabs(avg_y)<=10))
         route2.pop_back();
-    }
+    //}
       //}
     }
     else
@@ -614,30 +677,60 @@ void taskConfig(int number)
   else if(number==2)
   {
     route.clear();
-    route.push_back(Point(60,60));
-    for(int i=0;i<97;i++)
+    int cnt=8;
+    for(int i=0;i<cnt*3;i++)
+    {
+      route.push_back(Point(60,60));
+    }
+
+    for(int i=0;i<96;i++)
     {
       route.push_back(Point(60,60+i*5));
     }
+
+    for(int i=0;i<cnt*2;i++)
+    {
+      route.push_back(Point(60,540));
+    }
+
     cout<<"1:"<<route.at(route.size()-1)<<endl;
-    for(int i=0;i<97;i++)
+    for(int i=0;i<96;i++)
     {
       route.push_back(Point(60+i*5,540));
     }
+
+    for(int i=0;i<cnt*2;i++)
+    {
+      route.push_back(Point(540,540));
+    }
     cout<<"2:"<<route.at(route.size()-1)<<endl;
-    for(int i=0;i<97;i++)
+
+    for(int i=0;i<96;i++)
     {
       route.push_back(Point(540,540-i*5));
     }
+
+    for(int i=0;i<cnt*2;i++)
+    {
+      route.push_back(Point(540,60));
+    }
+
     cout<<"3:"<<route.at(route.size()-1)<<endl;
-    for(int i=0;i<97;i++)
+    for(int i=0;i<96;i++)
     {
       route.push_back(Point(540-i*5,60));
+    }
+
+    for(int i=0;i<cnt*8;i++)
+    {
+      route.push_back(Point(60,60));
     }
     cout<<"4:"<<route.at(route.size()-1)<<endl;
   }
   else if(number==3||number==4)
   {
+    warpPerspective(frame,dst,H,Size(600,600));
+    black=splitBlcak(dst);
     route2.clear();
     getRect2(black,dst,cornPts,true);
     getRoute(cornPts,3.0,route2);

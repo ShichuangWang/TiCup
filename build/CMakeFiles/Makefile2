@@ -74,12 +74,12 @@ clean: CMakeFiles/TiCup.dir/clean
 CMakeFiles/TiCup.dir/all:
 	$(MAKE) -f CMakeFiles/TiCup.dir/build.make CMakeFiles/TiCup.dir/depend
 	$(MAKE) -f CMakeFiles/TiCup.dir/build.make CMakeFiles/TiCup.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/orangepi/Desktop/TiCup/build/CMakeFiles --progress-num=1,2 "Built target TiCup"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/orangepi/Desktop/TiCup/build/CMakeFiles --progress-num=1,2,3 "Built target TiCup"
 .PHONY : CMakeFiles/TiCup.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/TiCup.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/orangepi/Desktop/TiCup/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/orangepi/Desktop/TiCup/build/CMakeFiles 3
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/TiCup.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/orangepi/Desktop/TiCup/build/CMakeFiles 0
 .PHONY : CMakeFiles/TiCup.dir/rule

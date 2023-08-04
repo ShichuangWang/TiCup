@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/TiCup.dir/calib.cpp.o"
   "CMakeFiles/TiCup.dir/main.cpp.o"
   "TiCup"
   "TiCup.pdb"

@@ -1,21 +1,21 @@
 Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
 Change Dir: /home/orangepi/Desktop/TiCup/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_64213/fast && /usr/bin/make -f CMakeFiles/cmTC_64213.dir/build.make CMakeFiles/cmTC_64213.dir/build
+Run Build Command(s):/usr/bin/make cmTC_5d46a/fast && /usr/bin/make -f CMakeFiles/cmTC_5d46a.dir/build.make CMakeFiles/cmTC_5d46a.dir/build
 make[1]: Entering directory '/home/orangepi/Desktop/TiCup/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_64213.dir/src.c.o
-/usr/bin/aarch64-linux-gnu-gcc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_64213.dir/src.c.o   -c /home/orangepi/Desktop/TiCup/build/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_64213
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_64213.dir/link.txt --verbose=1
-/usr/bin/aarch64-linux-gnu-gcc  -DCMAKE_HAVE_LIBC_PTHREAD    CMakeFiles/cmTC_64213.dir/src.c.o  -o cmTC_64213 
-/usr/bin/ld: CMakeFiles/cmTC_64213.dir/src.c.o: in function `main':
+Building C object CMakeFiles/cmTC_5d46a.dir/src.c.o
+/usr/bin/aarch64-linux-gnu-gcc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_5d46a.dir/src.c.o   -c /home/orangepi/Desktop/TiCup/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_5d46a
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5d46a.dir/link.txt --verbose=1
+/usr/bin/aarch64-linux-gnu-gcc  -DCMAKE_HAVE_LIBC_PTHREAD    CMakeFiles/cmTC_5d46a.dir/src.c.o  -o cmTC_5d46a 
+/usr/bin/ld: CMakeFiles/cmTC_5d46a.dir/src.c.o: in function `main':
 src.c:(.text+0x48): undefined reference to `pthread_create'
 /usr/bin/ld: src.c:(.text+0x50): undefined reference to `pthread_detach'
 /usr/bin/ld: src.c:(.text+0x5c): undefined reference to `pthread_join'
 collect2: error: ld returned 1 exit status
-make[1]: *** [CMakeFiles/cmTC_64213.dir/build.make:87: cmTC_64213] Error 1
+make[1]: *** [CMakeFiles/cmTC_5d46a.dir/build.make:87: cmTC_5d46a] Error 1
 make[1]: Leaving directory '/home/orangepi/Desktop/TiCup/build/CMakeFiles/CMakeTmp'
-make: *** [Makefile:121: cmTC_64213/fast] Error 2
+make: *** [Makefile:121: cmTC_5d46a/fast] Error 2
 
 
 Source file was:
@@ -41,18 +41,18 @@ int main(void)
 Determining if the function pthread_create exists in the pthreads failed with the following output:
 Change Dir: /home/orangepi/Desktop/TiCup/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_4cfab/fast && /usr/bin/make -f CMakeFiles/cmTC_4cfab.dir/build.make CMakeFiles/cmTC_4cfab.dir/build
+Run Build Command(s):/usr/bin/make cmTC_04b2f/fast && /usr/bin/make -f CMakeFiles/cmTC_04b2f.dir/build.make CMakeFiles/cmTC_04b2f.dir/build
 make[1]: Entering directory '/home/orangepi/Desktop/TiCup/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_4cfab.dir/CheckFunctionExists.c.o
-/usr/bin/aarch64-linux-gnu-gcc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_4cfab.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.16/Modules/CheckFunctionExists.c
-Linking C executable cmTC_4cfab
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4cfab.dir/link.txt --verbose=1
-/usr/bin/aarch64-linux-gnu-gcc  -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_4cfab.dir/CheckFunctionExists.c.o  -o cmTC_4cfab  -lpthreads 
+Building C object CMakeFiles/cmTC_04b2f.dir/CheckFunctionExists.c.o
+/usr/bin/aarch64-linux-gnu-gcc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_04b2f.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.16/Modules/CheckFunctionExists.c
+Linking C executable cmTC_04b2f
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_04b2f.dir/link.txt --verbose=1
+/usr/bin/aarch64-linux-gnu-gcc  -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_04b2f.dir/CheckFunctionExists.c.o  -o cmTC_04b2f  -lpthreads 
 /usr/bin/ld: cannot find -lpthreads
 collect2: error: ld returned 1 exit status
-make[1]: *** [CMakeFiles/cmTC_4cfab.dir/build.make:87: cmTC_4cfab] Error 1
+make[1]: *** [CMakeFiles/cmTC_04b2f.dir/build.make:87: cmTC_04b2f] Error 1
 make[1]: Leaving directory '/home/orangepi/Desktop/TiCup/build/CMakeFiles/CMakeTmp'
-make: *** [Makefile:121: cmTC_4cfab/fast] Error 2
+make: *** [Makefile:121: cmTC_04b2f/fast] Error 2
 
 
 

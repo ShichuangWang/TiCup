@@ -123,6 +123,33 @@ TiCup/fast:
 	$(MAKE) -f CMakeFiles/TiCup.dir/build.make CMakeFiles/TiCup.dir/build
 .PHONY : TiCup/fast
 
+calib.o: calib.cpp.o
+
+.PHONY : calib.o
+
+# target to build an object file
+calib.cpp.o:
+	$(MAKE) -f CMakeFiles/TiCup.dir/build.make CMakeFiles/TiCup.dir/calib.cpp.o
+.PHONY : calib.cpp.o
+
+calib.i: calib.cpp.i
+
+.PHONY : calib.i
+
+# target to preprocess a source file
+calib.cpp.i:
+	$(MAKE) -f CMakeFiles/TiCup.dir/build.make CMakeFiles/TiCup.dir/calib.cpp.i
+.PHONY : calib.cpp.i
+
+calib.s: calib.cpp.s
+
+.PHONY : calib.s
+
+# target to generate assembly for a file
+calib.cpp.s:
+	$(MAKE) -f CMakeFiles/TiCup.dir/build.make CMakeFiles/TiCup.dir/calib.cpp.s
+.PHONY : calib.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -159,6 +186,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... TiCup"
+	@echo "... calib.o"
+	@echo "... calib.i"
+	@echo "... calib.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

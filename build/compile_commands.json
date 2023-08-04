@@ -3,5 +3,10 @@
   "directory": "/home/orangepi/Desktop/TiCup/build",
   "command": "/usr/bin/aarch64-linux-gnu-g++   -isystem /usr/local/include/opencv4  -g   -std=gnu++11 -o CMakeFiles/TiCup.dir/main.cpp.o -c /home/orangepi/Desktop/TiCup/main.cpp",
   "file": "/home/orangepi/Desktop/TiCup/main.cpp"
+},
+{
+  "directory": "/home/orangepi/Desktop/TiCup/build",
+  "command": "/usr/bin/aarch64-linux-gnu-g++   -isystem /usr/local/include/opencv4  -g   -std=gnu++11 -o CMakeFiles/TiCup.dir/calib.cpp.o -c /home/orangepi/Desktop/TiCup/calib.cpp",
+  "file": "/home/orangepi/Desktop/TiCup/calib.cpp"
 }
 ]
